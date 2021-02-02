@@ -30,10 +30,22 @@ while read line; do
     s3cmd restore --restore-days=7 --restore-priority=bulk "s3://bucket-name/${line}"
 done < xaa
 ``` 
-7. Finally using aws s3 cp command change the object classes to STANDARD. If you see the Object class now on objects, it will be showing as STANDARD.
+7. Check the status of restore using bwlo s3api command. Replace the bucket name with yours and key name will be any objects name for which you want to check the status.
+```
+aws s3api head-object --bucket my-bucket --key index.html
+```
+While the archive is being retrieved, the JSON will contain a Restore key similar to:
+```
+"Restore": "ongoing-request=\"true\""
+```
+When the archive is ready to be downloaded, the Restore key will change to something like:
+```
+"Restore": "ongoing-request=\"false\", expiry-date=\"Thu, 17 Sep 2020 00:00:00 GMT\""
+```
+8. Finally using aws s3 cp command change the object classes to STANDARD. If you see the Object class now on objects, it will be showing as STANDARD.
 ``` 
 while read line; do
     aws s3 cp "s3://bucket-name/${line}" "s3://bucket-name/${line}"  --storage-class=STANDARD --force-glacier-transfer
 done < xaa
 ``` 
-8. The restored objects will remain in STANDARD class for the number of --restore-days mentioned in s3cmd restore command. After that they will be moved back to GLACIER. 
+9. The restored objects will remain in STANDARD class for the number of --restore-days mentioned in s3cmd restore command. After that they will be moved back to GLACIER. 
