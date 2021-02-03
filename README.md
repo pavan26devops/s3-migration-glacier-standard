@@ -45,7 +45,7 @@ When the archive is ready to be downloaded, the Restore key will change to somet
 8. Finally using aws s3 cp command change the object classes to STANDARD. If you see the Object class now on objects, it will be showing as STANDARD.
 ```
 while read line; do
-    aws s3 cp --recursive "s3://bucket-name/${line}" "s3://bucket-name/${line}"  --storage-class=STANDARD --force-glacier-transfer
+    aws s3 cp "s3://bucket-name/${line}" "s3://bucket-name/${line}"  --storage-class=STANDARD --force-glacier-transfer
 done < xaa
 ```
 9. Copy them to another s3 bucket. Say from old env to new env.
@@ -53,7 +53,7 @@ Add S3 bucket policy in old env, which grants access to aws user(who already hav
 Then run below command to initate the copy.
 ```
 while read line; do
-    aws s3 cp --recursive "s3://bucket-name/${line}" "s3://new-bucket-name/${line}"  --profile <aws-profile>
+    aws s3 cp "s3://bucket-name/${line}" "s3://new-bucket-name/${line}"  --profile <aws-profile>
 done < xaa
 ```
 10. The restored objects will remain in STANDARD class for the number of --restore-days mentioned in s3cmd restore command. After that they will be moved back to GLACIER.
